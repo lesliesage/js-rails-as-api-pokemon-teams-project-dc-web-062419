@@ -59,18 +59,26 @@ gem 'faker'
 
 While we are in the Gemfile, uncomment `gem 'rack-cors'`, then run 
 `bundle install`. If you recall, `rack-cors` is necessary for cross-origin
-resource sharing. To get rack-cors working, once the gem is installed, add the
-following to `config/application.rb` inside `class Application <
-Rails::Application` without replacing any other content:
+resource sharing. To get rack-cors working, once the gem is installed, uncomment the
+following code in `config/initializers/cors.rb`:
 
 ```rb
-config.middleware.insert_before 0, Rack::Cors do
+Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins '*'
-    resource '*', headers: :any, methods: [:get, :post, :delete]
+    origins "*"
+    resource '*',
+      headers: :any,
+      methods: [:get, :post, :put, :patch, :delete, :options, :head]
   end
 end
 ```
+
+The string after `origins` specifies which hosts will be allowed to make requests
+to your API. Your brand-new rails app probably comes with the string `"example.com"` there
+— change it to "*" to allow all hosts. In a production application, you might 
+want to specify a particular hostname.
+If you already have a rails server running, stop and restart it so that your 
+configuration changes can take effect.
 
 With these gems installed, use the following resource generators to create
 resources for this API:
@@ -82,7 +90,8 @@ rails g resource pokemon species nickname trainer:references
 
 Run `rails db:migrate` to create a schema, models, and controllers. Using
 `trainer:references` will set up `belongs_to :trainer` in the `Pokemon` model,
-though it won't update the `Trainer` side of the relationship.
+though it won't update the other side of the relationship. You will need to add
+the `has_many :pokemons` in the `Trainer` model yourself.
 
 In `db/seeds.rb`, add the following and run `rails db:seed`:
 
@@ -147,10 +156,22 @@ building out your frontend JavaScript:
 </div>
 ```
 
+### Building out the rest of the project
+
+Remember that your user stories are:
+- When a user loads the page, they should see all trainers, with their current team of Pokemon.
+- Whenever a user hits Add Pokemon and they have space on their team, they should get a new Pokemon.
+- Whenever a user hits Release Pokemon on a specific Pokemon team, that specific Pokemon should be
+released from the team.
+
+You should build out just enough of your Rails API to achieve the above. You _should not_ build out full
+CRUD on each model. For example, the frontend will not have the ability to create a new Trainer, so your
+backend should not have a `POST /trainers` route.
+
 ## Example API Requests
 
 To help you shape your data, here are some JSON data structures you should look
-to mirror while building out your applications:
+to mirror while building out your backend:
 
 ### Getting All Trainers and their Pokemon
 
@@ -184,7 +205,8 @@ GET /trainers
 ```
 
 ### Adding a Pokemon
-
+* Note: When adding a new pokemon, the nickname should be generated using the Faker::Name gem and the
+species should be generated using the Faker::Games::Pokemon gem. See the seeds.rb file above as an example.
 ```text
 #=> Example Request
 POST /pokemons
