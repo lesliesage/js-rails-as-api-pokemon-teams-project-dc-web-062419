@@ -11,13 +11,14 @@ class TrainersController < ApplicationController
 
     private
 
-    def trainer_options {
-        :include => {
-            :pokemons => {
-                :only => [:nickname, :species, :id]
-            }
-        },
-        :except => [:updated_at, :created_at]
+    def trainer_options 
+        {
+            :include => {
+                :pokemons => {
+                    :only => [:nickname, :species, :id]
+                }
+            },
+            :except => [:updated_at, :created_at]
         }
     end
 end

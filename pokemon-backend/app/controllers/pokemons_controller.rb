@@ -30,13 +30,14 @@ class PokemonsController < ApplicationController
         params.require(:pokemon).permit(:nickname, :species, :trainer_id)
     end
 
-    def pokemon_options {
-        :include =>  {
-            :trainer => {
-                :only => [:name]
-            }
-        },
-        :except => [:updated_at, :created_at, :trainer_id]
+    def pokemon_options 
+        {
+            :include =>  {
+                :trainer => {
+                    :only => [:name]
+                }
+            },
+            :except => [:updated_at, :created_at, :trainer_id]
         }
     end
 end
