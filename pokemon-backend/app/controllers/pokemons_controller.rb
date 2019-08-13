@@ -1,8 +1,6 @@
 class PokemonsController < ApplicationController
-
     def index
         pokemons = Pokemon.all
-        
         render json: pokemons.to_json(pokemon_options)
     end
 
@@ -32,11 +30,13 @@ class PokemonsController < ApplicationController
         params.require(:pokemon).permit(:nickname, :species, :trainer_id)
     end
 
-    def pokemon_options
-        {:include =>  {
-            :trainer => {:only => [:name]}
+    def pokemon_options {
+        :include =>  {
+            :trainer => {
+                :only => [:name]
+            }
         },
-        :except => [:updated_at, :created_at, :trainer_id]}
+        :except => [:updated_at, :created_at, :trainer_id]
+        }
     end
-
 end

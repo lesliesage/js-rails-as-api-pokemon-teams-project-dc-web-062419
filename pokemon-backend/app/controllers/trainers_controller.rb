@@ -1,5 +1,4 @@
 class TrainersController < ApplicationController
-
     def index
         trainers = Trainer.all
         render json: trainers.to_json(trainer_options)
@@ -12,8 +11,12 @@ class TrainersController < ApplicationController
 
     private
 
-    def trainer_options
-        {:include => {:pokemons => {:only => [:nickname, :species, :id]}},
+    def trainer_options {
+        :include => {
+            :pokemons => {
+                :only => [:nickname, :species, :id]
+            }
+        },
         :except => [:updated_at, :created_at]
         }
     end
